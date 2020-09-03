@@ -1,31 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TinderCard from "react-tinder-card";
 import "./style.css";
+import database from "../../firebase";
 
 function TinderCards() {
-  const [people, setPeople] = useState([
-    {
-      name: "Chansung",
-      url:
-        "https://sports.chosun.com/news/html/2018/07/30/2018073101002747200209912.jpg",
-    },
-    {
-      name: "Taec",
-      url:
-        "https://pds.joins.com/news/component/newsis/201807/25/NISI20180725_0000178915_web.jpg",
-    },
-    {
-      name: "Jun.K",
-      url:
-        "https://6.viki.io/image/a8f6a333dc374b29a05885f54e8cb91b.jpeg?s=900x600&e=t",
-    },
-  ]);
+  const [people, setPeople] = useState([]);
+
+  useEffect(() => {
+    database
+      .collection("people")
+      // onSnapshot()로 문서를 리슨
+      // →콜백이 최초로 호출될 때는 현재 내용으로 문서 스냅샷이 즉시 생성
+      // →내용이 변경될 때마다 콜백이 호출되어 문서 스냅샷을 업데이트
+      .onSnapshot(snapshot => setPeople(snapshot.docs.map(doc => doc.data())));
+  }, []);
 
   return (
     <div>
-      <h1>TinderCards</h1>
       <div className="tinderCardsWrapper">
-        {people.map((person) => (
+        {people.map(person => (
           <TinderCard
             className="swipe"
             key={person.name}
